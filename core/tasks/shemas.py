@@ -22,5 +22,5 @@ class TaskUpdateSchema(TaskBaseSchema):
 class TaskResponseSchema(TaskBaseSchema):
     id: int = Field(..., description='Unique identifier of the object')
 
-    created_date: datetime = Field(...,description='Creation date and time of the object')
-    updated_date: datetime = Field(...,description='Updating date and time of the object')
+    created_date: datetime = Field(..., description='Creation date and time of the object')
+    updated_date: datetime = Field(..., description='Updating date and time of the object')

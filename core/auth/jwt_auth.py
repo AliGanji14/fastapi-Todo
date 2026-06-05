@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from users.models import UserModel, TokenModel
+from users.models import UserModel
 from core.database import get_db
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -101,4 +101,3 @@ def decode_refresh_token(token):
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail=f"authentication failed, {e}")
-

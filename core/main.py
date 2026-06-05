@@ -28,8 +28,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(docs_url=None,
               swagger_ui_oauth2_redirect_url=None,
               title="Todo Application",
-              description='this is a section for description',
-              version="0.0.1",
+              description=('A simple and efficient Todo management API built with FastAPI. '
+                           'This API allows users to create, retrieve, update, and delete tasks. '
+                           'It is designed for task tracking and productivity improvement '),
+              version="1.0.0",
               terms_of_service="http://example.com/terms/",
               contact={
                       "name": "Ali Ganji",
@@ -53,7 +55,7 @@ def set_cookie(response: Response):
 
 
 @app.get('/get-cookie')
-def set_cookie(request: Request):
+def get_cookie(request: Request):
     print(request.cookies.get('test'))
     return {'message': 'cookie has been set successfully.'}
 
