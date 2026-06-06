@@ -20,20 +20,16 @@ def generate_token():
 
 @router.post("/login")
 async def user_login(request: UserLoginSchema, db: Session = Depends(get_db)):
-    user_obj = db.query(UserModel).filter_by(username=request.username.lower()).first()
+    user_obj = db.query(UserModel).filter_by(
+        username=request.username.lower()).first()
     if not user_obj:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="user dosent exist"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user for password"
         )
     if not user_obj.verify_password(request.password):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="password is invalid"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user for password"
         )
-
-    # token_obj = TokenModel(user_id=user_obj.id, token=generate_token())
-    # db.add(token_obj)
-    # db.commit()
-    # db.refresh(token_obj)
 
     access_token = generate_access_token(user_obj.id)
     refresh_token = generate_regresh_token(user_obj.id)
