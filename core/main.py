@@ -1,9 +1,13 @@
 from fastapi_swagger import patch_fastapi
-from fastapi import FastAPI, Response, Request
+from fastapi import FastAPI, Response, Request, status
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from tasks.routes import router as tasks_routes
 from users.routes import router as users_routes
 from fastapi.middleware.cors import CORSMiddleware
+
 import time
 
 tags_metadata = [
@@ -80,3 +84,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request, exc):
+    error_response = {
+        "error": True,
+        "status_code": exc.status_code,
+        "message": str(exc.detail),
+    }
+    return JSONResponse(status_code=exc.status_code, content=error_response)
+
+
+@app.exception_handler(RequestValidationError)
+async def http_validation_exception_handler(request, exc):
+    error_response = {
+        "error": True,
+        "status_code": status.HTTP_422_UNPROCESSABLE_CONTENT,
+        "message": "There was a problem with your form request",
+        "content": exc.errors(),
+    }
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content=error_response
+    )

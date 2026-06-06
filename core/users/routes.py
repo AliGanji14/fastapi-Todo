@@ -20,8 +20,7 @@ def generate_token():
 
 @router.post("/login")
 async def user_login(request: UserLoginSchema, db: Session = Depends(get_db)):
-    user_obj = db.query(UserModel).filter_by(
-        username=request.username.lower()).first()
+    user_obj = db.query(UserModel).filter_by(username=request.username.lower()).first()
     if not user_obj:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid user for password"
@@ -52,7 +51,10 @@ async def user_register(request: UserRegisterSchema, db: Session = Depends(get_d
     user_obj.set_password(request.password)
     db.add(user_obj)
     db.commit()
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content={"detail": "user registered successfully"})
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"detail": "user registered successfully"},
+    )
 
 
 @router.post("/refresh-token")

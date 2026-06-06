@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from users.models import UserModel
 from core.database import get_db
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta,timezone
+from datetime import datetime, timedelta, timezone
 import jwt
 from jwt.exceptions import DecodeError, InvalidSignatureError
 from core.config import settings
