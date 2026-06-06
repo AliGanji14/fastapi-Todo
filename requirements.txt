@@ -3,6 +3,7 @@ annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.0
 bcrypt==4.0.1
+black==26.5.1
 certifi==2026.1.4
 cffi==2.0.0
 click==8.3.1
@@ -16,6 +17,7 @@ fastapi-cli==0.0.20
 fastapi-cloud-cli==0.8.0
 fastapi-swagger==0.4.49
 fastar==0.8.0
+flake8==7.3.0
 greenlet==3.3.0
 h11==0.16.0
 httpcore==1.0.9
@@ -27,17 +29,25 @@ jwt==1.4.0
 Mako==1.3.10
 markdown-it-py==4.0.0
 MarkupSafe==3.0.3
+mccabe==0.7.0
 mdurl==0.1.2
+mypy_extensions==1.1.0
+packaging==26.2
 passlib==1.7.4
+pathspec==1.1.1
+platformdirs==4.10.0
+pycodestyle==2.14.0
 pycparser==3.0
 pydantic==2.12.5
 pydantic-extra-types==2.11.0
 pydantic-settings==2.12.0
 pydantic_core==2.41.5
+pyflakes==3.4.0
 Pygments==2.19.2
 PyJWT==2.11.0
 python-dotenv==1.2.1
 python-multipart==0.0.21
+pytokens==0.4.1
 PyYAML==6.0.3
 rich==14.2.0
 rich-toolkit==0.17.1
@@ -54,4 +64,3 @@ urllib3==2.6.2
 uvicorn==0.40.0
 watchfiles==1.1.1
 websockets==15.0.1
-flake8==7.3.0

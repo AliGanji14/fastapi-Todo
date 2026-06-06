@@ -16,7 +16,8 @@ class UserModel(Base):
     is_active = Column(Boolean, default=True)
     created_date = Column(DateTime, server_default=func.now())
     updated_date = Column(
-        DateTime, server_default=func.now(), server_onupdate=func.now())
+        DateTime, server_default=func.now(), server_onupdate=func.now()
+    )
 
     tasks = relationship("TaskModel", back_populates="user")
 

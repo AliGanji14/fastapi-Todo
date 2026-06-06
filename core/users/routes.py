@@ -5,25 +5,30 @@ from users.models import UserModel
 from sqlalchemy.orm import Session
 from core.database import get_db
 import secrets
-from auth.jwt_auth import generate_access_token, generate_regresh_token, decode_refresh_token
+from auth.jwt_auth import (
+    generate_access_token,
+    generate_regresh_token,
+    decode_refresh_token,
+)
 
-router = APIRouter(tags=['users'], prefix='/users')
+router = APIRouter(tags=["users"], prefix="/users")
 
 
 def generate_token():
     return secrets.token_hex(32)
 
 
-@router.post('/login')
+@router.post("/login")
 async def user_login(request: UserLoginSchema, db: Session = Depends(get_db)):
-    user_obj = db.query(UserModel).filter_by(
-        username=request.username.lower()).first()
+    user_obj = db.query(UserModel).filter_by(username=request.username.lower()).first()
     if not user_obj:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail='user dosent exist')
+            status_code=status.HTTP_400_BAD_REQUEST, detail="user dosent exist"
+        )
     if not user_obj.verify_password(request.password):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail='password is invalid')
+            status_code=status.HTTP_400_BAD_REQUEST, detail="password is invalid"
+        )
 
     # token_obj = TokenModel(user_id=user_obj.id, token=generate_token())
     # db.add(token_obj)
@@ -32,27 +37,32 @@ async def user_login(request: UserLoginSchema, db: Session = Depends(get_db)):
 
     access_token = generate_access_token(user_obj.id)
     refresh_token = generate_regresh_token(user_obj.id)
-    return JSONResponse(content={
-        'detail': 'logged in successfully',
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-    })
+    return JSONResponse(
+        content={
+            "detail": "logged in successfully",
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+    )
 
 
-@router.post('/register')
+@router.post("/register")
 async def user_register(request: UserRegisterSchema, db: Session = Depends(get_db)):
     if db.query(UserModel).filter_by(username=request.username.lower()).first():
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail='username already exists')
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="username already exists"
+        )
     user_obj = UserModel(username=request.username.lower())
     user_obj.set_password(request.password)
     db.add(user_obj)
     db.commit()
-    return JSONResponse(content={'detail': 'user registered successfully'})
+    return JSONResponse(content={"detail": "user registered successfully"})
 
 
-@router.post('/refresh-token')
-async def user_refresh_token(request: UserRefreshTokenSchema, db: Session = Depends(get_db)):
+@router.post("/refresh-token")
+async def user_refresh_token(
+    request: UserRefreshTokenSchema, db: Session = Depends(get_db)
+):
     user_id = decode_refresh_token(request.token)
     access_token = generate_access_token(user_id)
-    return JSONResponse(content={'access_token': access_token})
+    return JSONResponse(content={"access_token": access_token})

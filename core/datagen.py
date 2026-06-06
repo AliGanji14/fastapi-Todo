@@ -8,11 +8,11 @@ fake = Faker()
 
 def seed_users(db):
     user = UserModel(username=fake.user_name())
-    user.set_password('123456789')
+    user.set_password("123456789")
     db.add(user)
     db.commit()
     db.refresh(user)
-    print(f'User created with Username: {user.username} and ID: {user.id}')
+    print(f"User created with Username: {user.username} and ID: {user.id}")
     return user
 
 
@@ -29,7 +29,7 @@ def seed_tasks(db, user, count=10):
         )
     db.add_all(tasks_list)
     db.commit()
-    print(f'added 10 tasks for user id {user.id}')
+    print(f"added 10 tasks for user id {user.id}")
 
 
 def main():
