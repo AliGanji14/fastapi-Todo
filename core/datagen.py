@@ -18,7 +18,7 @@ def seed_users(db):
 
 def seed_tasks(db, user, count=10):
     tasks_list = []
-    for _ in range(10):
+    for _ in range(count):
         tasks_list.append(
             TaskModel(
                 user_id=user.id,
