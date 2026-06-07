@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from tasks.routes import router as tasks_routes
 from users.routes import router as users_routes
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import BackgroundTasks
 
 import time
 
@@ -107,3 +108,16 @@ async def http_validation_exception_handler(request, exc):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content=error_response
     )
+
+
+def start_task():
+    print('start task')
+    print('doing the process')
+    time.sleep(10)
+    print('finished task')
+
+
+@app.get('/initiate-task', status_code=200)
+async def initiate_task(background_tasks: BackgroundTasks):
+    background_tasks.add_task(start_task)
+    return JSONResponse(content={'detail': 'task is done'})
