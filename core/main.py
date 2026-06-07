@@ -8,8 +8,17 @@ from tasks.routes import router as tasks_routes
 from users.routes import router as users_routes
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import BackgroundTasks
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 import time
+
+scheduler = AsyncIOScheduler()
+
+
+def my_task():
+    print(f"Task executed at {time.strftime('%Y-%m-%d %H:%M-%S')}")
+
 
 tags_metadata = [
     {
@@ -26,7 +35,10 @@ tags_metadata = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Application startup")
+    scheduler.add_job(my_task, IntervalTrigger(seconds=10))
+    scheduler.start()
     yield
+    scheduler.shutdown()
     print("Application shutdown")
 
 
@@ -111,13 +123,13 @@ async def http_validation_exception_handler(request, exc):
 
 
 def start_task():
-    print('start task')
-    print('doing the process')
+    print("start task")
+    print("doing the process")
     time.sleep(10)
-    print('finished task')
+    print("finished task")
 
 
-@app.get('/initiate-task', status_code=200)
+@app.get("/initiate-task", status_code=200)
 async def initiate_task(background_tasks: BackgroundTasks):
     background_tasks.add_task(start_task)
-    return JSONResponse(content={'detail': 'task is done'})
+    return JSONResponse(content={"detail": "task is done"})
