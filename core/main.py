@@ -193,4 +193,15 @@ async def fetch_current_weather(latitude: float = 40.7128, longitude: float = -7
         return JSONResponse(content={"current_weather": current_weather})
     else:
         return JSONResponse(content={"detail": "Failed to fetch weather"}, status_code=500)
-    
+
+from core.email_util import send_email 
+# Endpoint to send email
+@app.get("/test-send-mail", status_code=200)
+async def test_send_mail():
+    await send_email(
+        subject="Test Email from FastAPI",
+        recipients=["recipient@example.com"],
+        body="This is a test email sent using the email_util function."
+    )
+    return JSONResponse(content={"detail": "Email has been sent"})
+
