@@ -98,5 +98,13 @@ services:
     command: bash -c 'celery -A core.celery_conf beat --loglevel=info'
     volumes:
       - ./core:/usr/src/core
+    
+  flower:
+    image: mher/flower:latest
+    command: celery --broker=redis://redis:6379/3 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
 volumes:
   smtp4dev-data:
