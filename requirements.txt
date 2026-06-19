@@ -72,3 +72,4 @@ psycopg2_binary
 fastapi-cache2[redis]
 fastapi-mail[httpx]
 locust
+celery[redis]
