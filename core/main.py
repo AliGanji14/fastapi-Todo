@@ -16,22 +16,28 @@ import time
 import httpx
 import logging
 
-
-logging.basicConfig(level=logging.INFO,format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
-jobstores = (
-    {'default':RedisJobStore(jobs_key='apscheduler.job',run_times_key='apscheduler.run_times',host='redis',port='6379',db=1)
+jobstores = {
+    "default": RedisJobStore(
+        jobs_key="apscheduler.job",
+        run_times_key="apscheduler.run_times",
+        host="redis",
+        port="6379",
+        db=1,
+    )
 }
-)
 
 
 scheduler = AsyncIOScheduler(jobstores=jobstores)
 
 
 def my_task():
-    logger.info(f'Task executed at {time.strftime('%Y-%m-%d %H:%M-%S')}')
+    logger.info(f"Task executed at {time.strftime('%Y-%m-%d %H:%M-%S')}")
 
 
 tags_metadata = [
@@ -49,7 +55,9 @@ tags_metadata = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Application startup")
-    scheduler.add_job(my_task, IntervalTrigger(seconds=10),id='my_task',replace_existing=True)
+    scheduler.add_job(
+        my_task, IntervalTrigger(seconds=10), id="my_task", replace_existing=True
+    )
     scheduler.start()
     yield
     scheduler.shutdown()
@@ -149,7 +157,6 @@ async def initiate_task(background_tasks: BackgroundTasks):
     return JSONResponse(content={"detail": "task is done"})
 
 
-
 # caching example
 
 
@@ -165,12 +172,13 @@ redis = aioredis.from_url(settings.REDIS_URL)
 cache_backend = RedisBackend(redis)
 FastAPICache.init(cache_backend, prefix="fastapi-cache")
 
+
 async def request_current_weather(latitude: float, longitude: float):
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
         "latitude": latitude,
         "longitude": longitude,
-        "current": "temperature_2m,relative_humidity_2m"
+        "current": "temperature_2m,relative_humidity_2m",
     }
 
     async with httpx.AsyncClient() as client:
@@ -182,7 +190,7 @@ async def request_current_weather(latitude: float, longitude: float):
         return current_weather
     else:
         return None
-    
+
 
 @app.get("/fetch-current-weather", status_code=200)
 @cache(expire=10)
@@ -192,23 +200,38 @@ async def fetch_current_weather(latitude: float = 40.7128, longitude: float = -7
 
         return JSONResponse(content={"current_weather": current_weather})
     else:
-        return JSONResponse(content={"detail": "Failed to fetch weather"}, status_code=500)
+        return JSONResponse(
+            content={"detail": "Failed to fetch weather"}, status_code=500
+        )
 
-from core.email_util import send_email 
+
+from core.email_util import send_email
+
+
 # Endpoint to send email
 @app.get("/test-send-mail", status_code=200)
 async def test_send_mail():
     await send_email(
         subject="Test Email from FastAPI",
         recipients=["recipient@example.com"],
-        body="This is a test email sent using the email_util function."
+        body="This is a test email sent using the email_util function.",
     )
     return JSONResponse(content={"detail": "Email has been sent"})
 
 
 from core.celery_conf import add_number
+from celery.result import AsyncResult 
 
 @app.get("/initiate-celery-task", status_code=200)
 async def initiate_celery_task():
-    add_number(1,2)
-    return JSONResponse(content={"detail": "task is done"})
+    add_number.delay(1, 2)
+    return JSONResponse(content={"detail": add_number.delay(1, 2).id})
+
+
+@app.get("/check-celery-task-result", status_code=200)
+async def initiate_celery_task(task_id:str):
+    result = AsyncResult(task_id).ready()
+    return JSONResponse(content={"result": result})
+
+
+
