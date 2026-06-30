@@ -67,8 +67,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    docs_url=None,
-    swagger_ui_oauth2_redirect_url=None,
     title="Todo Application",
     description=(
         "A simple and efficient Todo management API built with FastAPI. "
