@@ -157,6 +157,12 @@ async def initiate_task(background_tasks: BackgroundTasks):
     return JSONResponse(content={"detail": "task is done"})
 
 
+@app.get("/is_ready", status_code=200)
+async def readiness():
+    return JSONResponse(content="ok")
+
+
+
 # caching example
 
 
