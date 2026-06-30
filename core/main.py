@@ -15,7 +15,8 @@ from core.config import settings
 import time
 import httpx
 import logging
-
+from urllib.parse import urlparse
+redis_url = urlparse(settings.REDIS_URL)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -26,8 +27,9 @@ jobstores = {
     "default": RedisJobStore(
         jobs_key="apscheduler.job",
         run_times_key="apscheduler.run_times",
-        host="redis",
-        port="6379",
+        host=redis_url.hostname,
+        port=redis_url.port,
+        password=redis_url.password,
         db=1,
     )
 }
